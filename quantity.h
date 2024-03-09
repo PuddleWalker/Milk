@@ -24,7 +24,7 @@ public:
         {
             do
             {
-                random = rand() % (size * 2) - size;
+                random = rand() % (size * 4) - size * 2;
             } while (count(quan, quan + size, random) == 1);
             quan[i] = random;
         }
@@ -32,6 +32,7 @@ public:
 
     quantity(const quantity& other)//Конструктор копирования
     {
+        random = 0;
         Size = other.Size;
         quan = new int[other.Size];
 
@@ -56,7 +57,7 @@ public:
     quantity& operator+=(int num) {//Перегрузка оператора
         if (count(quan, quan + Size, num) == 0) {
             int* temp = new int[Size + 1];
-            for (int i = 0; i < (Size - 1); i++) {
+            for (int i = 0; i < Size; i++) {
                 temp[i] = quan[i];
             }
             temp[Size] = num;
@@ -71,7 +72,7 @@ public:
         quantity result(*this);
         if (count(quan, quan + Size, num) == 0) {
             int* temp = new int[Size + 1];
-            for (int i = 0; i < (Size - 1); i++) {
+            for (int i = 0; i < Size; i++) {
                 temp[i] = quan[i];
             }
             temp[Size] = num;
@@ -117,7 +118,6 @@ public:
             }
             Size--;
         }
-        *this = index;
         return *this;
     }
 
@@ -172,6 +172,22 @@ public:
         return *this;
     }
 
+    quantity& operator =(int size) {//Перегрузка оператора
+        delete[] quan;
+        quan = new int[size];
+        Size = size;
+
+        for (int i = 0; i < size; i++)
+        {
+            do
+            {
+                random = rand() % (size * 4) - size * 2;;
+            } while (count(quan, quan + size, random) == 1);
+            quan[i] = random;
+        }
+        return *this;
+    }
+
     bool operator==(const quantity& other) {//Перегрузка оператора
         quantity result(*this);
         if (this->Size == other.Size) {
@@ -218,11 +234,19 @@ public:
         {
             cout << quan[i] << ", ";
         }
-        cout << quan[Size] << "}";
+        if (Size != 0) cout << quan[Size - 1];
+        cout << "}";
     }
 };
 
 ostream& operator <<(ostream& out, const quantity& other) {
     other.print();
     return out;
+}
+
+istream& operator >>(istream& in, quantity& other) {
+    int num;
+    cin >> num;
+    other = num;
+    return in;
 }
